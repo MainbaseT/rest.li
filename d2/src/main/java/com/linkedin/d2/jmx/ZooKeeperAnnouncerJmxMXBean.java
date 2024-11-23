@@ -20,6 +20,7 @@
 
 package com.linkedin.d2.jmx;
 
+import com.linkedin.d2.balancer.LoadBalancerServer;
 import com.linkedin.d2.balancer.properties.PartitionData;
 import com.linkedin.d2.discovery.stores.PropertyStoreException;
 
@@ -72,4 +73,32 @@ public interface ZooKeeperAnnouncerJmxMXBean
   void setPartitionData(Map<Integer, PartitionData> partitionData);
 
   boolean isMarkUpFailed();
+
+  /**
+   * @return true if the announcer has completed sending a markup intent. NOTE THAT a mark-up intent sent does NOT mean the
+   * announcement status on service discovery registry is up. Service discovery registry may further process the host
+   * and determine its status. Check on service discovery registry for the final status.
+   */
+  boolean isMarkUpIntentSent();
+
+  /**
+   * @return true if the announcer has completed sending a dark warmup cluster markup intent.
+   */
+  boolean isDarkWarmupMarkUpIntentSent();
+
+  /**
+   * @return the times that the max weight has been breached.
+   */
+  int getMaxWeightBreachedCount();
+
+  /**
+   *
+   * @return the times that the max number of decimal places on weight has been breached.
+   */
+  int getWeightDecimalPlacesBreachedCount();
+
+  /**
+   * @return the server announce mode corresponding to {@link LoadBalancerServer#getAnnounceMode()}
+   */
+  int getServerAnnounceMode();
 }

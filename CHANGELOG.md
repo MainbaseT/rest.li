@@ -14,6 +14,48 @@ and what APIs have changed, if applicable.
 
 ## [Unreleased]
 
+## [29.63.0] - 2024-11-06
+- Add announcer status delegate interface
+
+## [29.62.1] - 2024-11-05
+- Enhancements in ByteString and its ByteIterator to reduce object allocation
+
+## [29.62.0] - 2024-10-28
+- Check and take configurable action for invalid partition weight
+
+## [29.61.0] - 2024-10-24
+- Disable dark traffic dispatching during dark warmup
+
+## [29.60.0] - 2024-10-17
+- Restore the old constructor to avoid incompatible issue
+
+## [29.59.0] - 2024-10-07
+- Add support for announcing/deannoucing service only to INDIS
+
+## [29.58.11] - 2024-10-03
+- Add getters in ZookeeperAnnouncer
+
+## [29.58.10] - 2024-09-24
+- Add symbol ID in the exception message when protobuf fails to resolve string references.
+
+## [29.58.9] - 2024-09-24
+- Fix invalid handling of glob collections for wildcard subscribers
+
+## [29.58.8] - 2024-09-23
+- Revert Add WildcardResourceSubscriber which could subscribe to all resources, like NODE and URIMap resources.
+
+## [29.58.7] - 2024-09-13
+- Add WildcardResourceSubscriber which could subscribe to all resources, like NODE and URIMap resources.
+
+## [29.58.6] - 2024-09-08
+- Allow for null paging inside Collection response envelopes
+
+## [29.58.5] - 2024-09-04
+- Respect glob collection subscriptions on reconnect
+
+## [29.58.4] - 2024-09-03
+- Respect `startPublishing` call by always re-notifying watcher in XdsClientImpl
+
 ## [29.58.3] - 2024-08-12
 - Disable the warmUp flaky unit test
 
@@ -5719,7 +5761,21 @@ patch operations can re-use these classes for generating patch messages.
 
 ## [0.14.1]
 
-[Unreleased]: https://github.com/linkedin/rest.li/compare/v29.58.3...master
+[Unreleased]: https://github.com/linkedin/rest.li/compare/v29.63.0...master
+[29.63.0]: https://github.com/linkedin/rest.li/compare/v29.62.1...v29.63.0
+[29.62.1]: https://github.com/linkedin/rest.li/compare/v29.62.0...v29.62.1
+[29.62.0]: https://github.com/linkedin/rest.li/compare/v29.61.0...v29.62.0
+[29.61.0]: https://github.com/linkedin/rest.li/compare/v29.60.0...v29.61.0
+[29.60.0]: https://github.com/linkedin/rest.li/compare/v29.59.0...v29.60.0
+[29.59.0]: https://github.com/linkedin/rest.li/compare/v29.58.11...v29.59.0
+[29.58.11]: https://github.com/linkedin/rest.li/compare/v29.58.10...v29.58.11
+[29.58.10]: https://github.com/linkedin/rest.li/compare/v29.58.9...v29.58.10
+[29.58.9]: https://github.com/linkedin/rest.li/compare/v29.58.8...v29.58.9
+[29.58.8]: https://github.com/linkedin/rest.li/compare/v29.58.7...v29.58.8
+[29.58.7]: https://github.com/linkedin/rest.li/compare/v29.58.6...v29.58.7
+[29.58.6]: https://github.com/linkedin/rest.li/compare/v29.58.5...v29.58.6
+[29.58.5]: https://github.com/linkedin/rest.li/compare/v29.58.4...v29.58.5
+[29.58.4]: https://github.com/linkedin/rest.li/compare/v29.58.3...v29.58.4
 [29.58.3]: https://github.com/linkedin/rest.li/compare/v29.58.2...v29.58.3
 [29.58.2]: https://github.com/linkedin/rest.li/compare/v29.58.1...v29.58.2
 [29.58.1]: https://github.com/linkedin/rest.li/compare/v29.58.0...v29.58.1
