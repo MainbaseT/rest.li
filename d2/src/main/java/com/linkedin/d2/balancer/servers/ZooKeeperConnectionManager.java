@@ -21,6 +21,8 @@
 package com.linkedin.d2.balancer.servers;
 
 import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -46,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision: $
  */
 
-public class ZooKeeperConnectionManager
+public class ZooKeeperConnectionManager extends ConnectionManager
 {
   private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperConnectionManager.class);
 
@@ -74,11 +76,15 @@ public class ZooKeeperConnectionManager
 
   private volatile ZooKeeperEphemeralStore<UriProperties> _store;
 
+  // Additional watchers that want to watch the connection status
+  private final Set<ZooKeeperConnectionWatcher> _zooKeeperConnectionWatchers = ConcurrentHashMap.newKeySet();
+
   public ZooKeeperConnectionManager(ZKPersistentConnection zkConnection,
                                     String zkBasePath,
                                     ZKStoreFactory<UriProperties,ZooKeeperEphemeralStore<UriProperties>> factory,
                                     ZooKeeperAnnouncer... servers)
   {
+    super(servers);
     _zkBasePath = zkBasePath;
     _zkConnection = zkConnection;
     _factory = factory;
@@ -94,6 +100,7 @@ public class ZooKeeperConnectionManager
                                     ZKStoreFactory<UriProperties,ZooKeeperEphemeralStore<UriProperties>> factory,
                                     ZooKeeperAnnouncer... servers)
   {
+    super(servers);
     _zkConnectString = zkConnectString;
     _zkSessionTimeout = zkSessionTimeout;
     _zkBasePath = zkBasePath;
@@ -132,6 +139,7 @@ public class ZooKeeperConnectionManager
     this(zkConnectString, zkSessionTimeout, zkBasePath, factory, servers);
   }
 
+  @Override
   public void start(Callback<None> callback)
   {
     _managerStarted = true;
@@ -154,6 +162,7 @@ public class ZooKeeperConnectionManager
     }
   }
 
+  @Override
   public void shutdown(final Callback<None> callback)
   {
     _managerStarted = false;
@@ -180,6 +189,11 @@ public class ZooKeeperConnectionManager
     }
   }
 
+  /**
+   * @deprecated, use {@link  ConnectionManager#markDownAllServers(Callback)} instead.
+   */
+  @Deprecated
+  @Override
   public void markDownAllServers(final Callback<None> callback)
   {
     Callback<None> markDownCallback;
@@ -211,6 +225,11 @@ public class ZooKeeperConnectionManager
     }
   }
 
+  /**
+   * @deprecated, use {@link  ConnectionManager#markUpAllServers(Callback)} instead.
+   */
+  @Deprecated
+  @Override
   public void markUpAllServers(final Callback<None> callback)
   {
     Callback<None> markUpCallback;
@@ -278,6 +297,8 @@ public class ZooKeeperConnectionManager
             {
               server.retry(Callbacks.empty());
             }
+
+            _zooKeeperConnectionWatchers.forEach(ZooKeeperConnectionWatcher::onConnected);
           }
           break;
         }
@@ -286,6 +307,11 @@ public class ZooKeeperConnectionManager
           break;
       }
     }
+  }
+
+  public interface ZooKeeperConnectionWatcher
+  {
+    void onConnected();
   }
 
   /**
@@ -353,9 +379,19 @@ public class ZooKeeperConnectionManager
     Z createStore(ZKConnection connection, String path);
   }
 
+  /**
+   * @deprecated Use {@link #ConnectionManager#getAnnouncers()} instead.
+   */
+  @Deprecated
   public ZooKeeperAnnouncer[] getAnnouncers()
   {
     return _servers;
+  }
+
+  @Override
+  public String getAnnouncementTargetIdentifier()
+  {
+    return getZooKeeperConnectString();
   }
 
   public boolean isSessionEstablished()
@@ -376,5 +412,10 @@ public class ZooKeeperConnectionManager
   public String getZooKeeperBasePath()
   {
     return _zkBasePath;
+  }
+
+  public void addConnectionWatcher(ZooKeeperConnectionWatcher watcher)
+  {
+    _zooKeeperConnectionWatchers.add(watcher);
   }
 }
